@@ -1,5 +1,3 @@
-# yaml-language-server: $schema=https://sap.github.io/ui5-tooling/schema/ui5.yaml.json
-
 specVersion: "3.1"
 metadata:
   name: cockpit
@@ -29,11 +27,11 @@ server:
     - name: fiori-tools-proxy
       afterMiddleware: compression
       configuration:
-        ignoreCertError: false # If set to true, certificate errors will be ignored. E.g. self-signed certificates will be accepted
+        ignoreCertError: false
         backend:
           - path: /sap
             url: http://10.6.168.44:8000
-            client: '200'
+            client: "200"
     - name: sap-fe-mockserver
       beforeMiddleware: csp
       configuration:
@@ -44,3 +42,11 @@ server:
             mockdataPath: ./webapp/localService/mainService/data
             generateMockData: true
         annotations: []
+    - name: fiori-tools-servestatic
+      afterMiddleware: compression
+      configuration:
+        paths:
+          - path: /resources/zwm316binstock
+            src: ..\zwm316binstock\webapp
+          - path: /appconfig
+            src: appconfig

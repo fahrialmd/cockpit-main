@@ -1,5 +1,3 @@
-# yaml-language-server: $schema=https://sap.github.io/ui5-tooling/schema/ui5.yaml.json
-
 specVersion: "3.1"
 metadata:
   name: cockpit
@@ -9,7 +7,7 @@ server:
     - name: fiori-tools-proxy
       afterMiddleware: compression
       configuration:
-        ignoreCertError: false # If set to true, certificate errors will be ignored. E.g. self-signed certificates will be accepted
+        ignoreCertError: false
         ui5:
           path:
             - /resources
@@ -18,7 +16,7 @@ server:
         backend:
           - path: /sap
             url: http://10.6.168.44:8000
-            client: '300'
+            client: "300"
     - name: fiori-tools-appreload
       afterMiddleware: compression
       configuration:
@@ -30,3 +28,11 @@ server:
       configuration:
         flp:
           theme: sap_horizon
+    - name: fiori-tools-servestatic
+      afterMiddleware: compression
+      configuration:
+        paths:
+          - path: /resources/zwm316binstock
+            src: ..\zwm316binstock\webapp
+          - path: /appconfig
+            src: appconfig

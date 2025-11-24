@@ -149,17 +149,17 @@ sap.ui.define(
                     const oModel = aContexts[0].getModel();
 
                     try {
-                        console.log(aContexts)
-                        await Promise.all(
+                        const aResults = await Promise.all(
                             aContexts.map(async (oContext) => {
                                 const sPath = oContext.getPath();
                                 const oAction = oModel.bindContext(`${sPath}/com.sap.gateway.srvd.zr_wm101_cockpit.v0001.counting(...)`);
                                 await oAction.execute();
-
+                                const oBoundContext = oAction.getBoundContext();
+                                return oBoundContext.getObject();
                             })
                         );
-
                         await oModel.refresh();
+                        this._externalNavigation(aResults[0]);
                     } catch (oError) {
                         console.error(oError);
                         const oMessageManager = sap.ui.getCore().getMessageManager();
@@ -177,6 +177,30 @@ sap.ui.define(
                         return;
                     }
                 },
+
+                _externalNavigation: function (oParams) {
+
+                    var oCrossAppNavigator = sap.ushell.Container.getService("CrossApplicationNavigation");
+
+                    oCrossAppNavigator.toExternal({
+                        target: {
+                            semanticObject: oParams.semantic_object,
+                            action: oParams.action_name
+                        },
+                        params: {
+                            "p_request_id": oParams.request_id,
+                            "p_bin": oParams.storage_bin,
+                            "p_site": oParams.site,
+                            "p_location": oParams.location,
+                            "p_deadline_date": oParams.deadline_datetime,
+                            "p_warehouse": oParams.warehouse,
+                            "p_request_status": oParams.status, 
+                        }
+                    }).catch((error) => {
+                        MessageToast.show("Navigation failed: " + (error.message || "Unknown error"));
+                        console.error("Navigation error:", error);
+                    });
+                }
 
             }
         );
